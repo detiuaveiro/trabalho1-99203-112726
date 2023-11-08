@@ -10,12 +10,13 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
-// NMec:  Name:
+// NMec:  Name:  
+//  99203      André Gonçalves
 // 
 // 
-// 
-// Date:
+// Date: 11/8/2023
 //
+#include <math.h>
 
 #include "image8bit.h"
 

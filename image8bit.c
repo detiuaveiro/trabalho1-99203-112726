@@ -167,21 +167,59 @@ void ImageInit(void) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageCreate(int width, int height, uint8 maxval) { ///
+Image ImageCreate(int width, int height, uint8 maxval) { ///              André
   assert (width >= 0);
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
+  Image img = malloc(sizeof(Image));
+    if (img == NULL) {
+        // Handle malloc failure
+        return NULL;                                               //error
+  }
+  //the image is a single dimension array. 
+  img->width = width;
+  img->height=height;
+  img->maxval= maxval;
+  img->pixel =malloc(sizeof(uint8)*width*height);
+  if (img->pixel==NULL){
+    free (img);
+    return NULL;                                                  //error
+  }
+  // Initialize pixels to 0
+    for (int i = 0; i < width * height; i++) {
+        img->pixel[i] = 0;
+    }
+
+    return img;
 }
+  
+  
+
 
 /// Destroy the image pointed to by (*imgp).
 ///   imgp : address of an Image variable.
 /// If (*imgp)==NULL, no operation is performed.
 /// Ensures: (*imgp)==NULL.
 /// Should never fail, and should preserve global errno/errCause.
-void ImageDestroy(Image* imgp) { ///
+void ImageDestroy(Image* imgp){ ///    André
   assert (imgp != NULL);
+ 
   // Insert your code here!
+ //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ // errno/errCause missing 
+  Image img = *imgp;
+  for (int i =0; i<img->width; i++){
+    for (int j=0; j<img->height; j++){
+      img->pixel[i * img->height + j] = 0;
+    }
+  }
+  free(img->pixel);
+  img->pixel = NULL;
+  img->width = 0;
+  img->height = 0;
+  free(imgp);
+  imgp = NULL;
 }
 
 
@@ -302,10 +340,24 @@ int ImageValidPos(Image img, int x, int y) { ///
   return (0 <= x && x < img->width) && (0 <= y && y < img->height);
 }
 
-/// Check if rectangular area (x,y,w,h) is completely inside img.
-int ImageValidRect(Image img, int x, int y, int w, int h) { ///
+/// Check if rectangular area (x,y,w,h) is completely inside img.  
+int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
   assert (img != NULL);
   // Insert your code here!
+  int x1,x2,y1,y2,w1,w2,h1,h2=0;   
+                                                      
+                                  // if every point is valid retangular area is as well,
+                                  // if any point is invalid the area is invalid  
+
+
+  x1,x2=IverseG(img,x); // will return only if the point is validated, exceptions will happen on InverseG's assert
+  y1,y2=IverseG(img,y);
+  w1,w2=IverseG(img,w);
+  h1,h2=IverseG(img,h);
+  
+
+  return 1;
+  
 }
 
 /// Pixel get & set operations
@@ -318,15 +370,34 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 // Transform (x, y) coords into linear pixel index.
 // This internal function is used in ImageGetPixel / ImageSetPixel. 
 // The returned index must satisfy (0 <= index < img->width*img->height)
-static inline int G(Image img, int x, int y) {
+
+
+
+static inline int G(Image img, int x, int y) {          //this function returns the index of a x,y coordinate
   int index;
   // Insert your code here!
+  index = y * img->width + x;
   assert (0 <= index && index < img->width*img->height);
   return index;
 }
 
-/// Get the pixel (level) at position (x,y).
-uint8 ImageGetPixel(Image img, int x, int y) { ///
+
+
+static inline int IverseG(Image img, int index){        // this function will return the x,y coordinates of a index 
+                                                        //André
+
+  assert(index >= 0 && index < img->width * img->height);
+  assert(img != NULL);
+  int x, y;
+  x=index%img->width;
+  y=index/img->width;
+  assert (1==ImageValidPos(img, x, y));
+  return x,y;
+}
+
+
+/// Get the pixel (level) at position (x,y).         
+uint8 ImageGetPixel(Image img, int x, int y) { ///                      returns the colr of the pixel
   assert (img != NULL);
   assert (ImageValidPos(img, x, y));
   PIXMEM += 1;  // count one pixel access (read)
@@ -334,7 +405,7 @@ uint8 ImageGetPixel(Image img, int x, int y) { ///
 } 
 
 /// Set the pixel at position (x,y) to new level.
-void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
+void ImageSetPixel(Image img, int x, int y, uint8 level) { ///           sets new color on a pixel
   assert (img != NULL);
   assert (ImageValidPos(img, x, y));
   PIXMEM += 1;  // count one pixel access (store)
@@ -353,27 +424,46 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 /// Transform image to negative image.
 /// This transforms dark pixels to light pixels and vice-versa,
 /// resulting in a "photographic negative" effect.
-void ImageNegative(Image img) { ///
+void ImageNegative(Image img) { ///    André
   assert (img != NULL);
   // Insert your code here!
+  
+  for (int i =0;i<(img->width*img->height);i++){   
+     img->pixel[i]=img->maxval - img->pixel[i];    //pixel=maxval-pixel
+     PIXMEM += 1;                  
+  }
 }
 
 /// Apply threshold to image.
 /// Transform all pixels with level<thr to black (0) and
 /// all pixels with level>=thr to white (maxval).
-void ImageThreshold(Image img, uint8 thr) { ///
+void ImageThreshold(Image img, uint8 thr) { ///   André 
   assert (img != NULL);
   // Insert your code here!
+   for (int i =0;i<(img->width*img->height);i++){   
+    if (img->pixel[i]<thr){       //if pixel under threshold 
+     
+     img->pixel[i]=0;    //pixel=black
+     PIXMEM += 1;                  
+    }
+  }
 }
 
 /// Brighten image by a factor.
 /// Multiply each pixel level by a factor, but saturate at maxval.
 /// This will brighten the image if factor>1.0 and
 /// darken the image if factor<1.0.
-void ImageBrighten(Image img, double factor) { ///
+void ImageBrighten(Image img, double factor) { ///    André
   assert (img != NULL);
-  // ? assert (factor >= 0.0);
+  assert (factor >= 0.0);
   // Insert your code here!
+  int px =0;
+                        // aka pixel ammount
+  for (int i = 0 ; i < (img->width * img->height) ; i++){  
+    px = (int)round(img->pixel[i]*factor);
+    img->pixel[i]= fmin(px,img->maxval);
+    }
+  
 }
 
 
@@ -401,6 +491,15 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+
+
+
+
+
+
+
+
+
 }
 
 /// Mirror an image = flip left-right.
@@ -440,7 +539,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
 /// Paste img2 into position (x, y) of img1.
 /// This modifies img1 in-place: no allocation involved.
 /// Requires: img2 must fit inside img1 at position (x, y).
-void ImagePaste(Image img1, int x, int y, Image img2) { ///
+void ImagePaste(Image img1, int x, int y, Image img2) { ///    
   assert (img1 != NULL);
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));

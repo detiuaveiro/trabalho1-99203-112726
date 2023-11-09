@@ -10,16 +10,23 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
+<<<<<<< HEAD
+// NMec:  Name:
+// 99203 André Gonçalves
+// 
+// 
+// Date:8/11/2023
+=======
 // NMec:  Name:  
 //  99203      André Gonçalves
 // 
 // 
 // Date: 11/8/2023
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 //
 #include <math.h>
 
 #include "image8bit.h"
-
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -96,7 +103,7 @@ char* ImageErrMsg() { ///
 // Defensive programming aids
 //
 // Proper defensive programming in C, which lacks an exception mechanism,
-// generally leads to possibly long chains of function calls, error checking,
+// generally leads to possibly long chains of function calls, error checking, 
 // cleanup code, and return statements:
 //   if ( funA(x) == errorA ) { return errorX; }
 //   if ( funB(x) == errorB ) { cleanupForA(); return errorY; }
@@ -173,7 +180,11 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
+<<<<<<< HEAD
+  Image img = (Image)malloc(sizeof(*img));
+=======
   Image img = malloc(sizeof(Image));
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
     if (img == NULL) {
         // Handle malloc failure
         return NULL;                                               //error
@@ -182,7 +193,12 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
   img->width = width;
   img->height=height;
   img->maxval= maxval;
+<<<<<<< HEAD
+  img->pixel =(uint8*)malloc(sizeof(uint8)*width*height);
+
+=======
   img->pixel =malloc(sizeof(uint8)*width*height);
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
   if (img->pixel==NULL){
     free (img);
     return NULL;                                                  //error
@@ -195,8 +211,19 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
     return img;
 }
   
+<<<<<<< HEAD
+
+// variavel
+//stuct a {int widht; float height; };
+// a.width = 3;;
+//pointer
+//stuct a* {int widht; float height; };
+// a->width = 3;
+
+=======
   
 
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 /// Destroy the image pointed to by (*imgp).
 ///   imgp : address of an Image variable.
@@ -210,6 +237,16 @@ void ImageDestroy(Image* imgp){ ///    André
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  // errno/errCause missing 
   Image img = *imgp;
+<<<<<<< HEAD
+  assert(img!=NULL);
+  if (img->pixel!=NULL){
+    free(img->pixel);
+    img->pixel = NULL;
+  }
+  free(img);
+  *imgp = NULL;  //set the original pointer to Null
+
+=======
   for (int i =0; i<img->width; i++){
     for (int j=0; j<img->height; j++){
       img->pixel[i * img->height + j] = 0;
@@ -221,6 +258,7 @@ void ImageDestroy(Image* imgp){ ///    André
   img->height = 0;
   free(imgp);
   imgp = NULL;
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 }
 
 
@@ -345,6 +383,19 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
   assert (img != NULL);
   // Insert your code here!
+<<<<<<< HEAD
+
+                                  // if the point + width/height is bigger than the image width/height
+                                  //  part of the rectangle is out of the picture  
+
+  if (x + w>img->width || y+h>img->height || x<0 || y<0 || w<0 || h<0){   //if any point is invalid
+    return 0;                    //invalid
+  
+  return 1;//valid
+  }
+    //w = width
+    //h = height
+=======
   int x1,x2,y1,y2,w1,w2,h1,h2=0;   
                                                       
                                   // if every point is valid retangular area is as well,
@@ -355,6 +406,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
   y1,y2=IverseG(img,y);
   w1,w2=IverseG(img,w);
   h1,h2=IverseG(img,h);
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
   
 
   return 1;
@@ -384,6 +436,18 @@ static inline int G(Image img, int x, int y) {          //this function returns 
 
 
 
+<<<<<<< HEAD
+static void InverseG(Image img,int index, int *x,int *y){  // this function will return the x,y coordinates of a index 
+                                                                //André
+  assert(index >= 0 && index < img->width * img->height);
+  assert(img != NULL);
+  //int x1, y;
+  
+  *x= index%img->width;
+  *y=index/img->width;
+  assert (1==ImageValidPos(img,*x,*y));
+  }
+=======
 static inline int IverseG(Image img, int index){        // this function will return the x,y coordinates of a index 
                                                         //André
 
@@ -395,6 +459,7 @@ static inline int IverseG(Image img, int index){        // this function will re
   assert (1==ImageValidPos(img, x, y));
   return x,y;
 }
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 
 /// Get the pixel (level) at position (x,y).         
@@ -461,10 +526,23 @@ void ImageBrighten(Image img, double factor) { ///    André
   int px =0;
                         // aka pixel ammount
   for (int i = 0 ; i < (img->width * img->height) ; i++){  
+<<<<<<< HEAD
+    
+    
+    px = (int) img->pixel[i]*factor+ 0.5;
+
+    if (px>img->maxval){
+      img->pixel[i]=img->maxval;
+    }else{
+      img->pixel[i]=px;
+    }
+  }
+=======
     px = (int)round(img->pixel[i]*factor);
     img->pixel[i]= fmin(px,img->maxval);
     }
   
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 }
 
 
@@ -493,15 +571,35 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
+<<<<<<< HEAD
+  // on rotation, (x,y), new x=y and new y = width - x
+  // image dimensions flip new width = old length and vice versa
+//              ImageCreate(    width,  height,    maxval)
+  Image image2= ImageCreate(img->height,img->width,img->maxval);
+  for (int i =0;i<(img->width*img->height);i++){   
+    
+    image2->pixel[G(image2,i%img->height , img->width-1-i/img->height)]=img->pixel[i];
+  }                       //  new x                   new y
+  
+      
+  return image2;
+
+
+
+//check for errors ?           i don't know what errors may happen here !
+//check image validity?        check points? check maxval?
+=======
 
 
 
 
 
+>>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 
 
 }
+
 
 /// Mirror an image = flip left-right.
 /// Returns a mirrored version of the image.
@@ -510,9 +608,20 @@ Image ImageRotate(Image img) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
+
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  Image image2= ImageCreate(img->width,img->height,img->maxval);
+  for (int i =0;i<(img->width*img->height);i++){   
+    
+        image2->pixel[G(image2,img->width-i/img->width,i%img->height)]=img->pixel[i];
+  }                       //  new x = width-x      dont mess with y  
+      
+  return image2;
+
+
 }
 
 /// Crop a rectangular subimage from img.
@@ -527,10 +636,20 @@ Image ImageMirror(Image img) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
+
 Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  int x2,y2=0;
+  Image image2= ImageCreate(w,h,img->maxval);
+  for (int i =0;i<(img->width*img->height);i++){   
+    InverseG(img,i,&x2,&y2);
+    if (x>x2&& x2>x+w && y>y2&& y2 >y+h){                          //if the point is inside the rectangle
+      image2->pixel[G(image2,x2-x,y2-y)]=img->pixel[i];  //gets the index of the new image by getting its relative coordinates with G to the new image and getting a index based on that.
+    }
+  }     
+  return image2 ; 
 }
 
 
@@ -545,19 +664,34 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  
+  int x1,y1=0;
+  
+  for (int i =0;i<(img1->width*img1->height);i++){   // iterates every pixel in img1
+    InverseG(img1,i,&x1,&y1);                        // gets coordinates x2,y2 of the pixel
+    
+    if (y <y1 && y1 < y+img1->width && x<x1 && x1< x + img1->height){   // if y <y1 < y+img1->width and x<x1< x + img1->height
+      img1->pixel[i]=img2->pixel[G(img2,x1-x,y1-y)];        // img1 pixel = img2 pixel
+    }    
+  }
 }
 
 /// Blend an image into a larger image.
 /// Blend img2 into position (x, y) of img1.
 /// This modifies img1 in-place: no allocation involved.
 /// Requires: img2 must fit inside img1 at position (x, y).
-/// alpha usually is in [0.0, 1.0], but values outside that interval
-/// may provide interesting effects.  Over/underflows should saturate.
+/// alpha usually is in [0.0, 1.0], but values outside that interval  
+/// may provide interesting effects.  Over/underflows should saturate. 
 void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+
+  // is this how its ment to be done ?
+  //  blur+paste ?
+  ImageBlur(img2,1,alpha);  // blur img2 by a factor of alpha
+  ImagePaste(img1,x,y,img2); // paste img2 into img1
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -568,6 +702,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+  return 0;
 }
 
 /// Locate a subimage inside another image.
@@ -578,6 +713,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+  return 0;
 }
 
 
@@ -589,5 +725,9 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  assert (img != NULL);
+  assert (dx >= 0);
+  assert (dy >= 0);
+  
 }
 

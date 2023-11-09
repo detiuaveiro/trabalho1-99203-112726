@@ -11,7 +11,7 @@
 
 #ifndef IMAGE8BIT_H
 #define IMAGE8BIT_H
-
+#include <math.h>
 #include <inttypes.h>
 
 // Type for pixel levels

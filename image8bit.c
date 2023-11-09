@@ -10,19 +10,11 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
-<<<<<<< HEAD
 // NMec:  Name:
 // 99203 André Gonçalves
 // 
 // 
 // Date:8/11/2023
-=======
-// NMec:  Name:  
-//  99203      André Gonçalves
-// 
-// 
-// Date: 11/8/2023
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 //
 #include <math.h>
 
@@ -180,11 +172,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
-<<<<<<< HEAD
   Image img = (Image)malloc(sizeof(*img));
-=======
-  Image img = malloc(sizeof(Image));
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
     if (img == NULL) {
         // Handle malloc failure
         return NULL;                                               //error
@@ -193,12 +181,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
   img->width = width;
   img->height=height;
   img->maxval= maxval;
-<<<<<<< HEAD
   img->pixel =(uint8*)malloc(sizeof(uint8)*width*height);
 
-=======
-  img->pixel =malloc(sizeof(uint8)*width*height);
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
   if (img->pixel==NULL){
     free (img);
     return NULL;                                                  //error
@@ -211,19 +195,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///              André
     return img;
 }
   
-<<<<<<< HEAD
-
-// variavel
-//stuct a {int widht; float height; };
-// a.width = 3;;
-//pointer
-//stuct a* {int widht; float height; };
-// a->width = 3;
-
-=======
   
 
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 /// Destroy the image pointed to by (*imgp).
 ///   imgp : address of an Image variable.
@@ -237,7 +210,6 @@ void ImageDestroy(Image* imgp){ ///    André
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  // errno/errCause missing 
   Image img = *imgp;
-<<<<<<< HEAD
   assert(img!=NULL);
   if (img->pixel!=NULL){
     free(img->pixel);
@@ -246,19 +218,6 @@ void ImageDestroy(Image* imgp){ ///    André
   free(img);
   *imgp = NULL;  //set the original pointer to Null
 
-=======
-  for (int i =0; i<img->width; i++){
-    for (int j=0; j<img->height; j++){
-      img->pixel[i * img->height + j] = 0;
-    }
-  }
-  free(img->pixel);
-  img->pixel = NULL;
-  img->width = 0;
-  img->height = 0;
-  free(imgp);
-  imgp = NULL;
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 }
 
 
@@ -383,7 +342,6 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
   assert (img != NULL);
   // Insert your code here!
-<<<<<<< HEAD
 
                                   // if the point + width/height is bigger than the image width/height
                                   //  part of the rectangle is out of the picture  
@@ -395,18 +353,6 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
   }
     //w = width
     //h = height
-=======
-  int x1,x2,y1,y2,w1,w2,h1,h2=0;   
-                                                      
-                                  // if every point is valid retangular area is as well,
-                                  // if any point is invalid the area is invalid  
-
-
-  x1,x2=IverseG(img,x); // will return only if the point is validated, exceptions will happen on InverseG's assert
-  y1,y2=IverseG(img,y);
-  w1,w2=IverseG(img,w);
-  h1,h2=IverseG(img,h);
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
   
 
   return 1;
@@ -436,7 +382,6 @@ static inline int G(Image img, int x, int y) {          //this function returns 
 
 
 
-<<<<<<< HEAD
 static void InverseG(Image img,int index, int *x,int *y){  // this function will return the x,y coordinates of a index 
                                                                 //André
   assert(index >= 0 && index < img->width * img->height);
@@ -447,19 +392,6 @@ static void InverseG(Image img,int index, int *x,int *y){  // this function will
   *y=index/img->width;
   assert (1==ImageValidPos(img,*x,*y));
   }
-=======
-static inline int IverseG(Image img, int index){        // this function will return the x,y coordinates of a index 
-                                                        //André
-
-  assert(index >= 0 && index < img->width * img->height);
-  assert(img != NULL);
-  int x, y;
-  x=index%img->width;
-  y=index/img->width;
-  assert (1==ImageValidPos(img, x, y));
-  return x,y;
-}
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 
 /// Get the pixel (level) at position (x,y).         
@@ -526,7 +458,6 @@ void ImageBrighten(Image img, double factor) { ///    André
   int px =0;
                         // aka pixel ammount
   for (int i = 0 ; i < (img->width * img->height) ; i++){  
-<<<<<<< HEAD
     
     
     px = (int) img->pixel[i]*factor+ 0.5;
@@ -537,12 +468,6 @@ void ImageBrighten(Image img, double factor) { ///    André
       img->pixel[i]=px;
     }
   }
-=======
-    px = (int)round(img->pixel[i]*factor);
-    img->pixel[i]= fmin(px,img->maxval);
-    }
-  
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 }
 
 
@@ -571,7 +496,6 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-<<<<<<< HEAD
   // on rotation, (x,y), new x=y and new y = width - x
   // image dimensions flip new width = old length and vice versa
 //              ImageCreate(    width,  height,    maxval)
@@ -588,13 +512,6 @@ Image ImageRotate(Image img) { ///
 
 //check for errors ?           i don't know what errors may happen here !
 //check image validity?        check points? check maxval?
-=======
-
-
-
-
-
->>>>>>> 9375c868cd5a773e8d5d0d117369f69aea0eb0ec
 
 
 

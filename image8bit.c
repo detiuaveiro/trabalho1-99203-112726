@@ -494,7 +494,7 @@ void ImageBrighten(Image img, double factor) { ///    André
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageRotate(Image img) { ///
+Image ImageRotate(Image img) { /// Bruno
     assert (img != NULL);
     // Insert your code here!
     int width = img->height;
@@ -522,19 +522,21 @@ Image ImageRotate(Image img) { ///
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-Image ImageMirror(Image img) { ///
-  assert (img != NULL);
-  // Insert your code here!
+Image ImageMirror(Image img) { /// Bruno
+    assert (img != NULL);
+    // Insert your code here!
+    Image image2= ImageCreate(img->width,img->height,img->maxval);
+    for (int i =0;i<(img->height);i++){
+        for (int j =0;j<(img->width);j++){
+            int mirroredx = img->width - j - 1;
+            int mirroredy = i;
 
-  Image image2= ImageCreate(img->width,img->height,img->maxval);
-  for (int i =0;i<(img->width*img->height);i++){   
-    
-        image2->pixel[G(image2,img->width-i/img->width,i%img->height)]=img->pixel[i];
-  }                       //  new x = width-x      dont mess with y  
-      
-  return image2;
+            uint8 pixelValue = ImageGetPixel(img,j,i);
 
-
+            ImageSetPixel(image2,mirroredx,mirroredy,pixelValue);
+        }
+    }
+    return image2;
 }
 
 /// Crop a rectangular subimage from img.

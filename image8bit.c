@@ -11,8 +11,8 @@
 
 // Student authors (fill in below):
 // NMec:  Name:
-// 99203 André Gonçalves
-// 
+// 99203  André Gonçalves
+// 112726 Bruno Pereira
 // 
 // Date:8/11/2023
 //
@@ -147,7 +147,7 @@ void ImageInit(void) { ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
-  
+
 }
 
 // Macros to simplify accessing instrumentation counters:
@@ -435,16 +435,18 @@ void ImageNegative(Image img) { ///    André
 /// Apply threshold to image.
 /// Transform all pixels with level<thr to black (0) and
 /// all pixels with level>=thr to white (maxval).
-void ImageThreshold(Image img, uint8 thr) { ///   André 
-  assert (img != NULL);
-  // Insert your code here!
-   for (int i =0;i<(img->width*img->height);i++){   
-    if (img->pixel[i]<thr){       //if pixel under threshold 
-     
-     img->pixel[i]=0;    //pixel=black
-     PIXMEM += 1;                  
+void ImageThreshold(Image img, uint8 thr) { ///   Bruno
+    assert (img != NULL);
+    // Insert your code here!
+    for (int i =0;i<img->height;i++){
+        for (int j =0;j<img->width;j++){
+            uint8 pixelValue = ImageGetPixel(img,j,i);
+
+            uint8 newPixelValue = pixelValue >= thr ? img->maxval : 0;
+
+            ImageSetPixel(img,j,i,newPixelValue);
+        }
     }
-  }
 }
 
 /// Brighten image by a factor.
@@ -500,12 +502,12 @@ Image ImageRotate(Image img) { ///
   // image dimensions flip new width = old length and vice versa
 //              ImageCreate(    width,  height,    maxval)
   Image image2= ImageCreate(img->height,img->width,img->maxval);
-  for (int i =0;i<(img->width*img->height);i++){   
-    
+  for (int i =0;i<(img->width*img->height);i++){
+
     image2->pixel[G(image2,i%img->height , img->width-1-i/img->height)]=img->pixel[i];
   }                       //  new x                   new y
-  
-      
+
+
   return image2;
 
 

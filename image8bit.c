@@ -459,9 +459,9 @@ void ImageBrighten(Image img, double factor) { ///    André
   // Insert your code here!
   int px =0;
                         // aka pixel ammount
-  for (int i = 0 ; i < (img->width * img->height) ; i++){  
-    
-    
+  for (int i = 0 ; i < (img->width * img->height) ; i++){
+
+
     px = (int) img->pixel[i]*factor+ 0.5;
 
     if (px>img->maxval){
@@ -495,28 +495,22 @@ void ImageBrighten(Image img, double factor) { ///    André
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 Image ImageRotate(Image img) { ///
-  assert (img != NULL);
-  // Insert your code here!
+    assert (img != NULL);
+    // Insert your code here!
+    int width = img->height;
+    int height = img->width;
+    Image image2= ImageCreate(img->width,img->height,img->maxval);
+    for (int i =0;i<(img->height);i++){
+        for (int j =0;j<(img->width);j++){
+            int rotatedx = i;
+            int rotatedy = img->width - j - 1;
 
-  // on rotation, (x,y), new x=y and new y = width - x
-  // image dimensions flip new width = old length and vice versa
-//              ImageCreate(    width,  height,    maxval)
-  Image image2= ImageCreate(img->height,img->width,img->maxval);
-  for (int i =0;i<(img->width*img->height);i++){
+            uint8 pixelValue = ImageGetPixel(img,j,i);
 
-    image2->pixel[G(image2,i%img->height , img->width-1-i/img->height)]=img->pixel[i];
-  }                       //  new x                   new y
-
-
-  return image2;
-
-
-
-//check for errors ?           i don't know what errors may happen here !
-//check image validity?        check points? check maxval?
-
-
-
+            ImageSetPixel(image2,rotatedx,rotatedy,pixelValue);
+        }
+    }
+    return image2;
 }
 
 

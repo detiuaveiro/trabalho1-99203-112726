@@ -574,21 +574,18 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { /// Bruno
 /// Paste img2 into position (x, y) of img1.
 /// This modifies img1 in-place: no allocation involved.
 /// Requires: img2 must fit inside img1 at position (x, y).
-void ImagePaste(Image img1, int x, int y, Image img2) { ///    
-  assert (img1 != NULL);
-  assert (img2 != NULL);
-  assert (ImageValidRect(img1, x, y, img2->width, img2->height));
-  // Insert your code here!
-  
-  int x1,y1=0;
-  
-  for (int i =0;i<(img1->width*img1->height);i++){   // iterates every pixel in img1
-    InverseG(img1,i,&x1,&y1);                        // gets coordinates x2,y2 of the pixel
-    
-    if (y <y1 && y1 < y+img1->width && x<x1 && x1< x + img1->height){   // if y <y1 < y+img1->width and x<x1< x + img1->height
-      img1->pixel[i]=img2->pixel[G(img2,x1-x,y1-y)];        // img1 pixel = img2 pixel
-    }    
-  }
+void ImagePaste(Image img1, int x, int y, Image img2) { /// Bruno
+    assert (img1 != NULL);
+    assert (img2 != NULL);
+    assert (ImageValidRect(img1, x, y, img2->width, img2->height));
+    // Insert your code here!
+    for (int i =0;i<(img2->height);i++){
+        for (int j =0;j<(img2->width);j++){
+            uint8 pixelValue = ImageGetPixel(img2,j,i);
+
+            ImageSetPixel(img1,j+x,i+y,pixelValue);
+        }
+    }
 }
 
 /// Blend an image into a larger image.

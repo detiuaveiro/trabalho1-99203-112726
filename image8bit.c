@@ -552,19 +552,19 @@ Image ImageMirror(Image img) { /// Bruno
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-Image ImageCrop(Image img, int x, int y, int w, int h) { ///
-  assert (img != NULL);
-  assert (ImageValidRect(img, x, y, w, h));
-  // Insert your code here!
-  int x2,y2=0;
-  Image image2= ImageCreate(w,h,img->maxval);
-  for (int i =0;i<(img->width*img->height);i++){   
-    InverseG(img,i,&x2,&y2);
-    if (x>x2&& x2>x+w && y>y2&& y2 >y+h){                          //if the point is inside the rectangle
-      image2->pixel[G(image2,x2-x,y2-y)]=img->pixel[i];  //gets the index of the new image by getting its relative coordinates with G to the new image and getting a index based on that.
+Image ImageCrop(Image img, int x, int y, int w, int h) { /// Bruno
+    assert (img != NULL);
+    assert (ImageValidRect(img, x, y, w, h));
+    // Insert your code here!
+    Image image2= ImageCreate(w,h,img->maxval);
+    for (int i =0;i<(h);i++){
+        for (int j =0;j<(w);j++){
+            uint8 pixelValue = ImageGetPixel(img,j+x,i+y);
+
+            ImageSetPixel(image2,j,i,pixelValue);
+        }
     }
-  }     
-  return image2 ; 
+    return image2;
 }
 
 
@@ -639,10 +639,24 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
-  // Insert your code here!
-  assert (img != NULL);
-  assert (dx >= 0);
-  assert (dy >= 0);
-  
+    assert (img != NULL);
+    assert (dx >= 0);
+    assert (dy >= 0);
+    // Insert your code here!
+    int x,y=0;
+    int x1,y1=0;
+    int sum=0;
+    int count=0;
+    for (int i =0;i<(img->width*img->height);i++){   // iterates every pixel in img1
+        InverseG(img,i,&x,&y);                        // gets coordinates x2,y2 of the pixel
+        for (int j =0;j<(img->width*img->height);j++){   // iterates every pixel in img1
+        InverseG(img,j,&x1,&y1);                        // gets coordinates x2,y2 of the pixel
+        if (x-dx<x1 && x1<x+dx && y-dy<y1 && y1<y+dy){   // if y <y1 < y+img1->width and x<x1< x + img1->height
+            sum+=img->pixel[j];
+            count++;
+        }
+        }
+        img->pixel[i]=sum/count;
+    }
 }
 

@@ -646,25 +646,44 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// Each pixel is substituted by the mean of the pixels in the rectangle
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
-void ImageBlur(Image img, int dx, int dy) { ///
+void ImageBlur(Image img, int dx, int dy) { /// Bruno
     assert (img != NULL);
-    assert (dx >= 0);
-    assert (dy >= 0);
-    // Insert your code here!
-    int x,y=0;
-    int x1,y1=0;
-    int sum=0;
-    int count=0;
-    for (int i =0;i<(img->width*img->height);i++){   // iterates every pixel in img1
-        InverseG(img,i,&x,&y);                        // gets coordinates x2,y2 of the pixel
-        for (int j =0;j<(img->width*img->height);j++){   // iterates every pixel in img1
-        InverseG(img,j,&x1,&y1);                        // gets coordinates x2,y2 of the pixel
-        if (x-dx<x1 && x1<x+dx && y-dy<y1 && y1<y+dy){   // if y <y1 < y+img1->width and x<x1< x + img1->height
-            sum+=img->pixel[j];
-            count++;
+    assert (dx >= 0 && dy >= 0);
+
+    // Create a temporary image to store the blurred result
+    Image image2 = ImageCreate(img->width, img->height, img->maxval);
+
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            int sum = 0;
+            int count = 0;
+            for (int k = -dx; k <= dx; k++) {
+                for (int l = -dy; l <= dy; l++) {
+                    int x = j + k;
+                    int y = i + l;
+                    if (x >= 0 && x < img->width && y >= 0 && y < img->height) {
+                        sum += ImageGetPixel(img, x, y);
+                        count++;
+                    }
+                }
+            }
+            // Use round for proper rounding of the mean
+            float mean = count > 0 ? round((float)sum / (float)count) : 0;
+            // Convert the mean back to uint8
+            uint8 meanInt = (uint8)fmin(img->maxval, fmax(0, mean + 0.5)); // Adicionando 0.5 para arredondar corretamente
+            ImageSetPixel(image2, j, i, meanInt);
         }
-        }
-        img->pixel[i]=sum/count;
     }
+
+    // Copy the blurred result back to the original image
+    for (int i = 0; i < img->height; i++) {
+        for (int j = 0; j < img->width; j++) {
+            uint8 pixelValue = ImageGetPixel(image2, j, i);
+            ImageSetPixel(img, j, i, pixelValue);
+        }
+    }
+
+    // Destroy the temporary image
+    ImageDestroy(&image2);
 }
 

@@ -594,16 +594,27 @@ void ImagePaste(Image img1, int x, int y, Image img2) { /// Bruno
 /// Requires: img2 must fit inside img1 at position (x, y).
 /// alpha usually is in [0.0, 1.0], but values outside that interval  
 /// may provide interesting effects.  Over/underflows should saturate. 
-void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
-  assert (img1 != NULL);
-  assert (img2 != NULL);
-  assert (ImageValidRect(img1, x, y, img2->width, img2->height));
-  // Insert your code here!
+void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { /// Bruno
+    assert (img1 != NULL);
+    assert (img2 != NULL);
+    assert (ImageValidRect(img1, x, y, img2->width, img2->height));
+    assert (0.0 <= alpha && alpha <= 1.0);
+    // Insert your code here!
 
-  // is this how its ment to be done ?
-  //  blur+paste ?
-  ImageBlur(img2,1,alpha);  // blur img2 by a factor of alpha
-  ImagePaste(img1,x,y,img2); // paste img2 into img1
+    for (int i =0;i<(img2->height);i++){
+        for (int j =0;j<(img2->width);j++){
+            uint8 pixelValue1 = ImageGetPixel(img1,j+x,i+y);
+            uint8 pixelValue2 = ImageGetPixel(img2,j,i);
+
+            int blendedPixelValue = (int) (alpha * pixelValue2 + (1 - alpha) * pixelValue1 + 0.5);
+
+            blendedPixelValue = (blendedPixelValue > PixMax) ? PixMax : blendedPixelValue;
+            blendedPixelValue = (blendedPixelValue < 0) ? 0 : blendedPixelValue;
+
+            ImageSetPixel(img1,j+x,i+y,(uint8)blendedPixelValue);
+
+        }
+    }
 }
 
 /// Compare an image to a subimage of a larger image.

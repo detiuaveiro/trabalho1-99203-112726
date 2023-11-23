@@ -442,7 +442,12 @@ void ImageThreshold(Image img, uint8 thr) { ///   Bruno
         for (int j =0;j<img->width;j++){
             uint8 pixelValue = ImageGetPixel(img,j,i);
 
-            uint8 newPixelValue = pixelValue >= thr ? img->maxval : 0;
+            uint8 newPixelValue;
+            if (pixelValue >= thr) {
+                newPixelValue = img->maxval;
+            } else {
+                newPixelValue = 0;
+            }
 
             ImageSetPixel(img,j,i,newPixelValue);
         }
@@ -462,7 +467,7 @@ void ImageBrighten(Image img, double factor) { ///    André
   for (int i = 0 ; i < (img->width * img->height) ; i++){
 
 
-    px = (int) img->pixel[i]*factor+ 0.5;
+    px = (int) (img->pixel[i]*factor+ 0.5);
 
     if (px>img->maxval){
       img->pixel[i]=img->maxval;
@@ -609,7 +614,11 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { /// Bruno
             int blendedPixelValue = (int) (alpha * pixelValue2 + (1 - alpha) * pixelValue1 + 0.5);
 
             blendedPixelValue = (blendedPixelValue > PixMax) ? PixMax : blendedPixelValue;
-            blendedPixelValue = (blendedPixelValue < 0) ? 0 : blendedPixelValue;
+            if (blendedPixelValue < 0) {
+                blendedPixelValue = 0;
+            } else {
+                blendedPixelValue = blendedPixelValue;
+            }
 
             ImageSetPixel(img1,j+x,i+y,(uint8)blendedPixelValue);
 
@@ -668,9 +677,14 @@ void ImageBlur(Image img, int dx, int dy) { /// Bruno
                 }
             }
             // Use round for proper rounding of the mean
-            float mean = count > 0 ? round((float)sum / (float)count) : 0;
+            int mean;
+            if (count > 0) {
+                mean = (int)((float)sum / count + 0.5);
+            } else {
+                mean = 0;
+            }
             // Convert the mean back to uint8
-            uint8 meanInt = (uint8)fmin(img->maxval, fmax(0, mean + 0.5)); // Adicionando 0.5 para arredondar corretamente
+            uint8 meanInt = (uint8)mean;
             ImageSetPixel(image2, j, i, meanInt);
         }
     }

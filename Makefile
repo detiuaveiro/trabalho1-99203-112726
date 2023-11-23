@@ -5,22 +5,22 @@
 # make clean        # to cleanup object files and executables
 # make cleanobj     # to cleanup object files only
 
-CFLAGS = -Wall -O2 -g -lm
+CFLAGS = -Wall -O2 -g
 
-PROGS = imageTool imageTest 
+PROGS = imageTool imageTest
 
 TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9
 
 # Default rule: make all programs
 all: $(PROGS)
 
-imageTest: imageTest.o image8bit.o instrumentation.o -lm
+imageTest: imageTest.o image8bit.o instrumentation.o
 
-imageTest.o: image8bit.h instrumentation.h -lm
+imageTest.o: image8bit.h instrumentation.h
 
-imageTool: imageTool.o image8bit.o instrumentation.o -lm
+imageTool: imageTool.o image8bit.o instrumentation.o
 
-imageTool.o: image8bit.h instrumentation.h -lm
+imageTool.o: image8bit.h instrumentation.h
 
 # Rule to make any .o file dependent upon corresponding .h file
 %.o: %.h
@@ -83,4 +83,3 @@ cleanobj:
 
 clean: cleanobj
 	rm -f $(PROGS)
-

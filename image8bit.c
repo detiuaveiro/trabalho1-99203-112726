@@ -664,7 +664,6 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
-  //best case?:
   int w1=img1->width;
   int h1=img1->height;
   int w2=img2->width;
@@ -676,11 +675,22 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   // if thats true for all pixels in img2, return 1 and the position of the first pixel
   // else, break and continue checking the next pixel in img1
   // if it cannot find a match, return 0
-    for (int x1=0; x1<w1; x1++){
-      for (int y1=0; y1<h1; y1++){
+  //worst case? will look all over the image for the first pixel
+
+  //best case? will look for first pixel where it must be for this to be a subpicture
+  // meaning it wouldnt fit inside the Bigger image if isnt in that square so there is no point looking elsewhere
+
+    //for (int x1=0; x1<w1; x1++){ //worst case?
+    for (int x1=0; x1<w1-w2; x1++){ //best case?
+    //for (int y1=0; y1<h1; y1++){//worst case ?
+      for (int y1=0; y1<h1-h2; y1++){ // bestcase?
         if (ImageGetPixel(img1,x1,y1)==ImageGetPixel(img2,0,0)){
           for (int x2=0; x2<w2; x2++){
             for (int y2=0; y2<h2; y2++){
+              // if (y2+y1> w1 || x2+x1>h1){ // this must be uncommented for the worst case
+              //   break;
+              // }
+
               if (ImageGetPixel(img1,x1+x2,y1+y2)!=ImageGetPixel(img2,x2,y2)){
                 break;
               }
@@ -692,12 +702,12 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
                 }
               }
             }
+
             break;
           }
         }
       }
-    } 
-    
+    }
 
   return 0;
 }

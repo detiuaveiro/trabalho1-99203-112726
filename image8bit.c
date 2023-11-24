@@ -381,18 +381,6 @@ static inline int G(Image img, int x, int y) {          //this function returns 
 
 
 
-static void InverseG(Image img,int index, int *x,int *y){  // this function will return the x,y coordinates of a index 
-                                                              
-  assert(index >= 0 && index < img->width * img->height);
-  assert(img != NULL);
-  //int x1, y;
-  
-  *x= index%img->width;
-  *y=index/img->width;
-  assert (1==ImageValidPos(img,*x,*y));
-  }
-
-
 /// Get the pixel (level) at position (x,y).         
 uint8 ImageGetPixel(Image img, int x, int y) { ///                      returns the colr of the pixel
   assert (img != NULL);

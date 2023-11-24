@@ -16,7 +16,6 @@
 // 
 // Date:8/11/2023
 //
-#include <math.h>
 
 #include "image8bit.h"
 #include <assert.h>
@@ -167,7 +166,7 @@ void ImageInit(void) { ///
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageCreate(int width, int height, uint8 maxval) { ///              André
+Image ImageCreate(int width, int height, uint8 maxval) { 
   assert (width >= 0);
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
@@ -339,7 +338,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 }
 
 /// Check if rectangular area (x,y,w,h) is completely inside img.  
-int ImageValidRect(Image img, int x, int y, int w, int h) { ///          André
+int ImageValidRect(Image img, int x, int y, int w, int h) { ///      
   assert (img != NULL);
   // Insert your code here!
 
@@ -383,7 +382,7 @@ static inline int G(Image img, int x, int y) {          //this function returns 
 
 
 static void InverseG(Image img,int index, int *x,int *y){  // this function will return the x,y coordinates of a index 
-                                                                //André
+                                                              
   assert(index >= 0 && index < img->width * img->height);
   assert(img != NULL);
   //int x1, y;
@@ -422,7 +421,7 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///           sets ne
 /// Transform image to negative image.
 /// This transforms dark pixels to light pixels and vice-versa,
 /// resulting in a "photographic negative" effect.
-void ImageNegative(Image img) { ///    André
+void ImageNegative(Image img) { 
   assert (img != NULL);
   // Insert your code here!
   
@@ -458,7 +457,7 @@ void ImageThreshold(Image img, uint8 thr) { ///   Bruno
 /// Multiply each pixel level by a factor, but saturate at maxval.
 /// This will brighten the image if factor>1.0 and
 /// darken the image if factor<1.0.
-void ImageBrighten(Image img, double factor) { ///    André
+void ImageBrighten(Image img, double factor) { 
   assert (img != NULL);
   assert (factor >= 0.0);
   // Insert your code here!
@@ -499,7 +498,7 @@ void ImageBrighten(Image img, double factor) { ///    André
 /// On success, a new image is returned.
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
-Image ImageRotate(Image img) { /// Bruno
+Image ImageRotate(Image img) { 
     assert (img != NULL);
     // Insert your code here!
     int width = img->height;
@@ -527,7 +526,7 @@ Image ImageRotate(Image img) { /// Bruno
 /// (The caller is responsible for destroying the returned image!)
 /// On failure, returns NULL and errno/errCause are set accordingly.
 
-Image ImageMirror(Image img) { /// Bruno
+Image ImageMirror(Image img) { 
     assert (img != NULL);
     // Insert your code here!
     Image image2= ImageCreate(img->width,img->height,img->maxval);
@@ -579,7 +578,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { /// Bruno
 /// Paste img2 into position (x, y) of img1.
 /// This modifies img1 in-place: no allocation involved.
 /// Requires: img2 must fit inside img1 at position (x, y).
-void ImagePaste(Image img1, int x, int y, Image img2) { /// Bruno
+void ImagePaste(Image img1, int x, int y, Image img2) { 
     assert (img1 != NULL);
     assert (img2 != NULL);
     assert (ImageValidRect(img1, x, y, img2->width, img2->height));
@@ -599,7 +598,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) { /// Bruno
 /// Requires: img2 must fit inside img1 at position (x, y).
 /// alpha usually is in [0.0, 1.0], but values outside that interval  
 /// may provide interesting effects.  Over/underflows should saturate. 
-void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { /// Bruno
+void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { 
     assert (img1 != NULL);
     assert (img2 != NULL);
     assert (ImageValidRect(img1, x, y, img2->width, img2->height));
@@ -634,7 +633,27 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
-  return 0;
+  int w1=img1->width;
+  int h1=img1->height;
+  int w2=img2->width;
+  int h2=img2->height;
+
+  //tldr: if the subimage at the point doesnt fit return 0
+  //     if the subimage at the point fits, check if the pixels match
+  //     if they do, return 1
+
+  if (w2+x>w1 || h2+y>h1){
+    return 0;
+  }
+
+  for (int i =0;i<(h2);i++){
+    for (int j =0;j<(w2);j++){
+      if (ImageGetPixel(img1,j+x,i+y)!=ImageGetPixel(img2,j,i)){
+        return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 /// Locate a subimage inside another image.
@@ -645,6 +664,41 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+  //best case?:
+  int w1=img1->width;
+  int h1=img1->height;
+  int w2=img2->width;
+  int h2=img2->height;
+
+
+  // for each pixel in img1 check if it matches the first pixel of img2
+  // if it does, check if the next pixel matches the next pixel of img2
+  // if thats true for all pixels in img2, return 1 and the position of the first pixel
+  // else, break and continue checking the next pixel in img1
+  // if it cannot find a match, return 0
+    for (int x1=0; x1<w1; x1++){
+      for (int y1=0; y1<h1; y1++){
+        if (ImageGetPixel(img1,x1,y1)==ImageGetPixel(img2,0,0)){
+          for (int x2=0; x2<w2; x2++){
+            for (int y2=0; y2<h2; y2++){
+              if (ImageGetPixel(img1,x1+x2,y1+y2)!=ImageGetPixel(img2,x2,y2)){
+                break;
+              }
+              if (ImageGetPixel(img1,x1+x2,y1+y2)==ImageGetPixel(img2,x2,y2)){
+                if (x2==w2-1 && y2==h2-1){
+                  *px=x1;
+                  *py=y1;
+                  return 1;
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    } 
+    
+
   return 0;
 }
 

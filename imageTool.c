@@ -134,7 +134,8 @@ int main(int ac, char* av[]) {
       if (sscanf(av[k], "%lf", &factor) != 1) { err = 5; break; }
       fprintf(stderr, "Brightening I%d by %lf\n", n-1, factor);
       ImageBrighten(img[n-1], factor);
-    } else if (strcmp(av[k], "create") == 0) {
+    
+    } else if (strcmp(av[k], "create") == 0) {    //-------------------------------------------------------------------------
       if (++k >= ac) { err = 1; break; }
       if (n >= N) { err = 3; break; }
       if (sscanf(av[k], "%d,%d", &w, &h) != 2) { err = 5; break; }
@@ -186,7 +187,8 @@ int main(int ac, char* av[]) {
       if (!ImageValidRect(img[n-1], x, y, w, h)) { err = 6; break; }
       fprintf(stderr, "Blending I%d with I%d@(%d,%d) with alpha=%.3f\n", n-2, n-1, x, y, alpha);
       ImageBlend(img[n-1], x, y, img[n-2], alpha);
-    } else if (strcmp(av[k], "locate") == 0) {
+
+    } else if (strcmp(av[k], "locate") == 0) {  //________________________________________________________
       if (n < 2) { err = 2; break; }
       fprintf(stderr, "Locating I%d in I%d\n", n-2, n-1);
       if (ImageLocateSubImage(img[n-1], &x, &y, img[n-2])) {
@@ -194,6 +196,12 @@ int main(int ac, char* av[]) {
       } else {
         printf("# NOTFOUND\n");
       }
+
+
+
+
+
+
     } else if (strcmp(av[k], "blur") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
@@ -201,6 +209,8 @@ int main(int ac, char* av[]) {
       if (sscanf(av[k], "%d,%d", &dx, &dy) != 2) { err = 5; break; }
       fprintf(stderr, "Blur I%d with %dx%d mean filter\n", n-1, 2*dx+1, 2*dy+1);
       ImageBlur(img[n-1], dx, dy);
+
+      
     } else if (strcmp(av[k], "save") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }

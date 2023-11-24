@@ -9,7 +9,8 @@ CFLAGS = -Wall -O2 -g
 
 PROGS = imageTool imageTest
 
-TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9
+TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9 test10# make tests        # to run basic tests
+
 
 # Default rule: make all programs
 all: $(PROGS)
@@ -72,6 +73,13 @@ test8: $(PROGS) setup
 test9: $(PROGS) setup
 	./imageTool test/original.pgm blur 7,7 save blur.pgm
 	cmp blur.pgm test/blur.pgm
+
+test10: $(PROGS) setup
+	
+	./imageTool	test/original.pgm crop 50,50,50,50 save crp.pgm
+	./imageTool crp.pgm test/original.pgm locate > locate_output.txt
+	echo "# FOUND (50,50)">expected_output.txt
+	cmp locate_output.txt expected_output.txt
 
 .PHONY: tests
 tests: $(TESTS)

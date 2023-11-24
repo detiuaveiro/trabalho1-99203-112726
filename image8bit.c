@@ -656,7 +656,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   int h1=img1->height;
   int w2=img2->width;
   int h2=img2->height;
-
+  int comparations =0;
 
   // for each pixel in img1 check if it matches the first pixel of img2
   // if it does, check if the next pixel matches the next pixel of img2
@@ -672,23 +672,24 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
     for (int x1=0; x1<w1-w2; x1++){ //best case?
     //for (int y1=0; y1<h1; y1++){//worst case ?
       for (int y1=0; y1<h1-h2; y1++){ // bestcase?
+        comparations++;
         if (ImageGetPixel(img1,x1,y1)==ImageGetPixel(img2,0,0)){
           for (int x2=0; x2<w2; x2++){
             for (int y2=0; y2<h2; y2++){
               // if (y2+y1> w1 || x2+x1>h1){ // this must be uncommented for the worst case
               //   break;
               // }
-
+              comparations++;
               if (ImageGetPixel(img1,x1+x2,y1+y2)!=ImageGetPixel(img2,x2,y2)){
                 break;
-              }
-              if (ImageGetPixel(img1,x1+x2,y1+y2)==ImageGetPixel(img2,x2,y2)){
+              }else 
                 if (x2==w2-1 && y2==h2-1){
                   *px=x1;
                   *py=y1;
+                  print ("comparations: %d\n",comparations);
                   return 1;
                 }
-              }
+              
             }
 
             break;
@@ -696,7 +697,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
         }
       }
     }
-
+  print("comparations: %d\n",comparations);
   return 0;
 }
 

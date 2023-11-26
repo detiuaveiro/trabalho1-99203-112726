@@ -71,15 +71,18 @@ test8: $(PROGS) setup
 	cmp blend.pgm test/blend.pgm
 
 test9: $(PROGS) setup
-	./imageTool test/original.pgm blur 7,7 save blur.pgm
-	cmp blur.pgm test/blur.pgm
-
+	./imageTool test/original.pgm tic 
+	./imageTool test/original.pgm blur 7,7 toc save blur.pgm 
+	
+	cmp blur.pgm test/blur.pgm 
 test10: $(PROGS) setup
 	
-	./imageTool	test/original.pgm crop 50,50,50,50 save crp.pgm
-	./imageTool crp.pgm test/original.pgm locate > locate_output.txt
-	echo "# FOUND (50,50)">expected_output.txt
-	cmp locate_output.txt expected_output.txt
+	./imageTool test/original.pgm crop 50,50,50,50 save crp.pgm 
+	./imageTool crp.pgm toc 
+	./imageTool test/original.pgm toc
+	./imageTool tic
+	./imageTool crp.pgm test/original.pgm locate toc 
+
 
 .PHONY: tests
 tests: $(TESTS)
